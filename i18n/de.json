@@ -262,6 +262,13 @@
       "forecast": "Vorhersage",
       "gridPrice": "Netzbezugspreis",
       "heaterTempLimit": "Heizungslimit",
+      "heating": {
+        "boost": "Boost",
+        "powerControl": "Leistungsregelung",
+        "statusB": "Standby",
+        "statusC": "heizt",
+        "switchedOn": "Eingeschaltet"
+      },
       "identifier": "RFID-Kennung",
       "loginBlocked": "Login-Limit erreicht",
       "max": "max",

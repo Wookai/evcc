@@ -262,6 +262,13 @@
       "forecast": "Forecast",
       "gridPrice": "Grid import price",
       "heaterTempLimit": "Heater limit",
+      "heating": {
+        "boost": "Boost",
+        "powerControl": "Power control",
+        "statusB": "standby",
+        "statusC": "heating",
+        "switchedOn": "Switched on"
+      },
       "identifier": "RFID-Identifier",
       "loginBlocked": "Login limit reached",
       "max": "max",

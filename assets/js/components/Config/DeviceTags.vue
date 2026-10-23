@@ -96,8 +96,11 @@ export default {
 		};
 	},
 	computed: {
+		heating() {
+			return !!this.tags?.heating?.value;
+		},
 		effectiveUsage() {
-			return this.tags?.heating?.value ? "consumer" : this.usage;
+			return this.heating ? "consumer" : this.usage;
 		},
 		regularEntries() {
 			const entries = Object.entries(this.tags)
@@ -191,11 +194,27 @@ export default {
 	},
 	methods: {
 		deviceValueLabel(name) {
+			if (this.heating) {
+				const heatingKey = this.heatingLabelKey(name);
+				if (heatingKey) return this.$t(heatingKey);
+			}
 			const usageKey = `config.deviceValue.usage.${this.effectiveUsage}.${name}`;
 			if (this.effectiveUsage && this.$te(usageKey)) {
 				return this.$t(usageKey);
 			}
 			return this.$t(`config.deviceValue.${name}`);
+		},
+		heatingLabelKey(name) {
+			switch (name) {
+				case "enabled":
+					// continuous devices run on their own, evcc only requests boost (SG Ready mode 3)
+					return this.tags?.continuous?.value
+						? "config.deviceValue.heating.boost"
+						: "config.deviceValue.heating.switchedOn";
+				case "switchDevice":
+					return "config.deviceValue.heating.powerControl";
+			}
+			return null;
 		},
 		truncateClasses(entry) {
 			// don't truncate numeric values
@@ -250,7 +269,11 @@ export default {
 				case "range":
 					return `${this.fmtNumber(distanceValue(value), 0)} ${distanceUnit()}`;
 				case "chargeStatus":
-					return value ? this.$t(`config.deviceValue.chargeStatus${value}`) : "-";
+					if (!value) return "-";
+					if (this.heating && this.$te(`config.deviceValue.heating.status${value}`)) {
+						return this.$t(`config.deviceValue.heating.status${value}`);
+					}
+					return this.$t(`config.deviceValue.chargeStatus${value}`);
 				case "switchDevice":
 					// switch device means no current control
 					return this.$t(`config.deviceValue.${value ? "no" : "yes"}`);

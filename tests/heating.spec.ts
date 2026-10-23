@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { start, stop, restart, baseUrl } from "./evcc";
-import { expectModalHidden, expectModalVisible } from "./utils";
+import { expectModalHidden, expectModalVisible, openMoreMenu } from "./utils";
 
 const CONFIG = "heating.evcc.yaml";
 
@@ -93,5 +93,20 @@ test.describe("integrated device", async () => {
     await expect(modal.getByText("Min. Current")).toBeVisible();
     await expect(modal.getByText("Phases")).toBeVisible();
     await expect(modal.getByText("Max. Current")).toHaveCount(0);
+  });
+});
+
+test.describe("device tags", async () => {
+  test("heating wording", async ({ page }) => {
+    await openMoreMenu(page);
+    await page.getByRole("link", { name: "Configuration" }).click();
+    await expect(page.getByRole("heading", { name: "Configuration" })).toBeVisible();
+    const waterHeater = page.getByTestId("loadpoint").filter({ hasText: "Water Heater" });
+    const heatPump = page.getByTestId("loadpoint").filter({ hasText: "Heat Pump" });
+    await expect(waterHeater).toContainText(["Status", "heating"].join(""));
+    await expect(waterHeater).toContainText(["Switched on", "yes"].join(""));
+    await expect(waterHeater).toContainText(["Power control", "no"].join(""));
+    await expect(heatPump).toContainText(["Boost", "yes"].join(""));
+    await expect(heatPump).not.toContainText("charging");
   });
 });
